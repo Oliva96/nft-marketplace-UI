@@ -1,0 +1,31 @@
+.modalStyle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 10px;
+  width: 500px;
+  padding: 32px;
+}
+
+.modalStyleMobile {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 2px solid #000;
+  border-radius: 10px;
+  width: 80%;
+  padding-right: 16px;
+  padding-left: 16px;
+  padding-top: 24px;
+  padding-bottom: 24px;
+}
+
+.buttonStyle {
+  border-radius: 16px;
+  padding-top: 24px;
+  padding-bottom: 24px;
+  width: 100%;
+  cursor: pointer;
+}
