@@ -11,8 +11,7 @@ import {
 } from "@mui/material";
 
 // Icons
-import MetaMaskIcon from "../../assets/Icons/darkUIIcons/metaMaskIcon.svg";
-import MetaMaskIconLight from "../../assets/Icons/lightUIIcons/metaMaskIcon.svg";
+import MetaMaskIcon from "../../assets/Icons/darkUIIcons/metamask-logo.png";
 import { FaWallet } from "react-icons/fa";
 
 import { useTheme } from "@emotion/react";
@@ -25,8 +24,6 @@ const ConnectWalletPopUp = ({
   handleCloseModal,
   darkMode,
   handleConnectWallet,
-  handleDisconnectWallet,
-  walletAddress,
 }) => {
   const { t } = useTranslation();
 
@@ -47,7 +44,7 @@ const ConnectWalletPopUp = ({
       <Fade in={openModal}>
         {!isMobile ? (
           <Box
-            bgcolor={darkMode ? "#121212" : "#fff2f8"}
+            bgcolor={darkMode ? "rgb(8,33,54)" : "#fff2f8"}
             className={styles.modalStyle}
           >
             <Box display="flex" alignItems="center" gap={4}>
@@ -56,7 +53,8 @@ const ConnectWalletPopUp = ({
               </Typography>
               <Typography
                 variant="h5"
-                borderBottom={`2px solid ${darkMode ? "white" : "#121212"}`}
+                color="secondary"
+                borderBottom={`2px solid ${darkMode ? "#ffffff" : "#121212"}`}
                 pb={"5px"}
               >
                 {t("CONNECT_TO_WALLET")}
@@ -68,34 +66,16 @@ const ConnectWalletPopUp = ({
                 columns={{ xs: 12, md: 12 }}
                 spacing={{ xs: 4, md: 4 }}
               >
-                <Grid item xs={6} md={6}>
+                <Grid item xs={12} md={12}>
                   <Button
                     onClick={handleConnectWallet}
                     disableElevation
                     color="accent"
                     variant="contained"
                     className={styles.buttonStyle}
+                    style={{ backgroundColor: `${darkMode ? "aliceblue" : "bisque"}`}}
                   >
-                    {darkMode ? (
-                      <img src={MetaMaskIcon} alt="Meta Mask" />
-                    ) : (
-                      <img src={MetaMaskIconLight} alt="Meta Mask" />
-                    )}
-                  </Button>
-                </Grid>
-                <Grid item xs={6} md={6}>
-                  <Button
-                    // onClick={handleDisconnectWallet}
-                    disableElevation
-                    color="accent"
-                    variant="contained"
-                    className={styles.buttonStyle}
-                  >
-                    {darkMode ? (
-                      <img src={MetaMaskIcon} alt="Meta Mask" />
-                    ) : (
-                      <img src={MetaMaskIconLight} alt="Meta Mask" />
-                    )}
+                    <img src={MetaMaskIcon} alt="Meta Mask" />
                   </Button>
                 </Grid>
               </Grid>
@@ -104,7 +84,7 @@ const ConnectWalletPopUp = ({
         ) : (
           <Box
             className={styles.modalStyleMobile}
-            bgcolor={darkMode ? "#171c26" : "#fff2f8"}
+            bgcolor={darkMode ? "rgb(8,33,54)" : "#fff2f8"}
           >
             <Box
               display="flex"
@@ -118,6 +98,7 @@ const ConnectWalletPopUp = ({
               <Typography
                 variant="subtitle1"
                 pb={"5px"}
+                color="secondary"
                 borderBottom={`2px solid ${darkMode ? "#ffffff" : "#121212"}`}
               >
                 {t("CONNECT_TO_WALLET")}
@@ -129,64 +110,19 @@ const ConnectWalletPopUp = ({
                 columns={{ xs: 12, md: 12 }}
                 spacing={{ xs: 2, md: 4 }}
               >
-                <Grid item xs={6} md={6}>
+                <Grid item xs={12} md={12}>
                   <Button
                     onClick={handleConnectWallet}
                     disableElevation
                     color="accent"
                     variant="contained"
                     className={styles.buttonStyle}
+                    style={{ backgroundColor: `${darkMode ? "aliceblue" : "bisque"}`}}
                   >
-                    {darkMode ? (
-                      <img
-                        style={{ width: "30px" }}
-                        src={MetaMaskIcon}
-                        alt="Meta Mask"
-                      />
-                    ) : (
-                      <img
-                        style={{ width: "30px" }}
-                        src={MetaMaskIconLight}
-                        alt="Meta Mask"
-                      />
-                    )}
-                    <Typography
-                      variant="span"
-                      color="secondary"
-                      sx={{ textTransform: "capitalize" }}
-                    >
-                      {t("METAMASK")}
-                    </Typography>
-                  </Button>
-                </Grid>
-                <Grid item xs={6} md={6}>
-                  <Button
-                    // onClick={handleDisconnectWallet}
-                    disableElevation
-                    color="accent"
-                    variant="contained"
-                    className={styles.buttonStyle}
-                  >
-                    {darkMode ? (
-                      <img
-                        style={{ width: "30px" }}
-                        src={MetaMaskIcon}
-                        alt="Meta Mask"
-                      />
-                    ) : (
-                      <img
-                        style={{ width: "30px" }}
-                        src={MetaMaskIconLight}
-                        alt="Meta Mask"
-                      />
-                    )}
-                    <Typography
-                      variant="span"
-                      color="secondary"
-                      sx={{ textTransform: "capitalize" }}
-                    >
-                      {t("METAMASK")}
-                    </Typography>
+                    <img
+                      src={MetaMaskIcon}
+                      alt="Meta Mask"
+                    />
                   </Button>
                 </Grid>
               </Grid>

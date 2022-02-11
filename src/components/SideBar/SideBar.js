@@ -372,7 +372,7 @@ const SideBar = ({ darkMode }) => {
                       ></div>
                     ) : null}
                     <IconButton
-                      onClick={() => navigate(`${"/profile/user-profile"}`)}
+                      onClick={() => navigate(`${"/profile/language"}`)}
                     >
                       {location.pathname ===
                       `/profile${location.pathname?.slice(8)}` ? (

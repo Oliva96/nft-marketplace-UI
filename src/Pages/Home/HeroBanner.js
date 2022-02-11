@@ -1,6 +1,7 @@
 import { Button, Grid, Stack, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { GradientButtonPrimary } from "../../Utils/GradientButtons/GradientButtons";
 import CardsDeck from "./CardDeck";
 
@@ -14,6 +15,7 @@ import MobileCardDeck from "./MobileCardDeck";
 // import HeroVectorLineLight from "../../assets/heroVectorLineLight.svg";
 
 const HeroBanner = ({ darkMode, isMobile }) => {
+  const navigate = useNavigate();
   return (
     <Box
       sx={{
@@ -22,18 +24,6 @@ const HeroBanner = ({ darkMode, isMobile }) => {
         overflowY: "hidden",
       }}
     >
-      {/* <Box sx={{ position: "absolute", top: "15%" }}>
-        <img style={{ width: "98%" }} src={HeroVectorSecondaryDark} alt="" />
-      </Box>
-      <Box sx={{ position: "absolute", top: "25%" }}>
-        <img style={{ width: "98%" }} src={HeroVectorSecondaryDark} alt="" />
-      </Box>
-      <Box sx={{ position: "absolute", top: "30%", right: "5%" }}>
-        <img style={{ width: "102%" }} src={HeroVectorMainDark} alt="" />
-      </Box>
-      <Box sx={{ position: "absolute", top: "30%", right: "5%" }}>
-        <img style={{ width: "102%" }} src={HeroVectorMainDark} alt="" />
-      </Box> */}
       <Box sx={!isMobile ? { pt: 4, pb: 15 } : { pt: 2, pb: 40 }}>
         <Grid
           container
@@ -61,12 +51,13 @@ const HeroBanner = ({ darkMode, isMobile }) => {
               </Typography>
               {!isMobile ? (
                 <Stack direction="row" alignItems="center" spacing={4} mt={4}>
-                  <GradientButtonPrimary variant="contained">
+                  <GradientButtonPrimary 
+                    style={{width: '200px'}}
+                    variant="contained"
+                    onClick={()=> {navigate("/explore")}}
+                  >
                     Explore
                   </GradientButtonPrimary>
-                  <Button variant="outlined" color="secondary">
-                    Create
-                  </Button>
                 </Stack>
               ) : null}
             </Box>

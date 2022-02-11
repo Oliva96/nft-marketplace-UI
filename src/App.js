@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { createContext, useState } from "react";
 import { useEffect } from "react";
 
 // Material UI
@@ -127,7 +127,7 @@ function App() {
                     element={<SellersDetails darkMode={darkMode} />}
                   />
                   <Route
-                    path="/user/dummy"
+                    path="/user/:id"
                     element={<DummyUserProfile darkMode={darkMode} />}
                   />
                   <Route

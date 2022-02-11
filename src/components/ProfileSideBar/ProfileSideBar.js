@@ -18,26 +18,26 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 const profileSideMenu = [
-  {
-    id: 1,
-    name: "SETTINGS_USER_PROFILE",
-    icon: <IoPersonSharp />,
-    path: "/user-profile",
-  },
+  // {
+  //   id: 1,
+  //   name: "SETTINGS_USER_PROFILE",
+  //   icon: <IoPersonSharp />,
+  //   path: "/user-profile",
+  // },
+  // {
+  //   id: 2,
+  //   name: "SETTINGS_KYC",
+  //   icon: <AiFillIdcard />,
+  //   path: "/kyc",
+  // },
   {
     id: 2,
-    name: "SETTINGS_KYC",
-    icon: <AiFillIdcard />,
-    path: "/kyc",
-  },
-  {
-    id: 3,
     name: "SETTINGS_LANGUAGE",
     icon: <IoLanguage />,
     path: "/language",
   },
   {
-    id: 4,
+    id: 3,
     name: "SETTINGS_THEME",
     icon: <IoIosSwitch />,
     path: "/theme",

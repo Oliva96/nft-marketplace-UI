@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Button,
   Divider,
@@ -6,6 +6,8 @@ import {
   Modal,
   Stack,
   Typography,
+  Tooltip,
+  ClickAwayListener,
 } from "@mui/material";
 import { Box } from "@mui/system";
 import styles from "./AssetProperModal.module.css";
@@ -27,6 +29,28 @@ const AssetProperModal = ({
   handleSavePropeties,
 }) => {
   const { t } = useTranslation();
+
+  const [openTooltip, setOpenTooltip] = useState(false);
+
+  const handleTooltipClose = () => {
+    setOpenTooltip(false);
+  };
+
+  const handleTooltipOpen = () => {
+    setOpenTooltip(true);
+  };
+
+  const Verification = () => {
+    for (let i = 0; i < propertiesDataState.length; i++) {
+      const element = propertiesDataState[i];
+      if(element.key === "" || element.value === "") {
+        handleTooltipOpen();
+        return;
+      }
+    }
+    handleSavePropeties();
+  }
+
   return (
     <Box>
       <Modal
@@ -96,30 +120,17 @@ const AssetProperModal = ({
                       onChange={(e) => handlePropertiesChange(e, index)}
                     />
                   </Box>
-                  {propertiesDataState.length > 1 ? (
-                    <Box>
-                      <IconButton
-                        className={styles.deleteButton}
-                        onClick={() => handlePropertiesRemove(pd.id)}
-                        color="secondary"
-                      >
-                        <Typography component="span" color="secondary">
-                          <BsTrashFill />
-                        </Typography>
-                      </IconButton>
-                    </Box>
-                  ) : (
-                    <Box sx={{ opacity: 0 }}>
-                      <IconButton
-                        className={styles.deleteButton}
-                        color="secondary"
-                      >
-                        <Typography component="span" color="secondary">
-                          <BsTrashFill />
-                        </Typography>
-                      </IconButton>
-                    </Box>
-                  )}
+                  <Box>
+                    <IconButton
+                      className={styles.deleteButton}
+                      onClick={() => handlePropertiesRemove(pd.id)}
+                      color="secondary"
+                    >
+                      <Typography component="span" color="secondary">
+                        <BsTrashFill />
+                      </Typography>
+                    </IconButton>
+                  </Box>
                 </Stack>
               </div>
             ))}
@@ -137,20 +148,34 @@ const AssetProperModal = ({
                   {t("CLOSE")}
                 </Typography>
               </Button>
-              <Button
-                disableElevation
-                color="pink"
-                variant="contained"
-                onClick={handleSavePropeties}
-                className={styles.buttonStyles}
-              >
-                <Typography component="span" color="#ffffff" mt={1}>
-                  <FiSave />
-                </Typography>
-                <Typography variant="body2" component="span" color="#ffffff">
-                  {t("SAVE")}
-                </Typography>
-              </Button>
+              <ClickAwayListener onClickAway={handleTooltipClose}>
+                <Tooltip
+                  PopperProps={{
+                    disablePortal: true,
+                  }}
+                  onClose={handleTooltipClose}
+                  open={openTooltip}
+                  disableFocusListener
+                  disableHoverListener
+                  disableTouchListener
+                  title={t("CREATE_ASSET_PROPERTIES_TOOLTIP")}
+                >
+                  <Button
+                    disableElevation
+                    color="pink"
+                    variant="contained"
+                    onClick={Verification}
+                    className={styles.buttonStyles}
+                  >
+                    <Typography component="span" color="#ffffff" mt={1}>
+                      <FiSave />
+                    </Typography>
+                    <Typography variant="body2" component="span" color="#ffffff">
+                      {t("SAVE")}
+                    </Typography>
+                  </Button>
+                </Tooltip>
+              </ClickAwayListener>
             </Box>
           </Box>
         </Box>

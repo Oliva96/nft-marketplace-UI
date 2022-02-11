@@ -1,15 +1,17 @@
 import {
   Button,
+  ClickAwayListener,
   Grid,
   IconButton,
   Stack,
+  Tooltip,
   Typography,
   useMediaQuery,
 } from "@mui/material";
 import { useTheme } from "@emotion/react";
 
 import { Box } from "@mui/system";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import { styled } from "@mui/material/styles";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
@@ -26,6 +28,9 @@ import AssetProperModal from "../../components/AssetPropertiesModal/AssetProperM
 
 import { useTranslation } from "react-i18next";
 import { LocalizationProvider, MobileDatePicker } from "@mui/lab";
+import { createSale, SubmitToIPFS } from "../../Services/CreateAssets.service";
+import SignerContext from "../../signerContext";
+import { useNavigate } from "react-router-dom";
 
 const Input = styled("input")({
   display: "none",
@@ -34,13 +39,16 @@ const Input = styled("input")({
 // const propertiesData = { id: Math.random(), color: "black" };
 
 const CreateAssets = ({ darkMode }) => {
-  const [image, setImage] = useState(null);
 
   const { t } = useTranslation();
+
+  const { signer, setSigner} = useContext(SignerContext);
+  const navigate = useNavigate();
 
   const [fixedButtonToggler, setFixedButtonToggler] = useState(true);
   const [openButtonToggler, setOpenButtonToggler] = useState(false);
   const [openModal, setOpenModal] = useState(false);
+  const [openTooltip, setOpenTooltip] = useState(false);
 
   const [dateValueFrom, setDateValueFrom] = useState(new Date());
   const [dateValueTo, setDateValueTo] = useState(new Date());
@@ -48,9 +56,14 @@ const CreateAssets = ({ darkMode }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
-  const [propertiesDataState, setPropertiesDataState] = useState([
-    { key: "", value: "" },
-  ]);
+  const [image, setImage] = useState(null);
+  const [formInput, setFormInput] = useState({
+    name: null, 
+    description: null,
+    price: null, 
+  });
+
+  const [propertiesDataState, setPropertiesDataState] = useState([]);
 
   const [savedProperties, setSavedProperties] = useState([]);
 
@@ -80,7 +93,16 @@ const CreateAssets = ({ darkMode }) => {
     setOpenModal(false);
   };
 
+  const handleTooltipClose = () => {
+    setOpenTooltip(false);
+  };
+
+  const handleTooltipOpen = () => {
+    setOpenTooltip(true);
+  };
+
   const handleOpenModal = () => {
+    setPropertiesDataState(savedProperties);
     setOpenModal(true);
   };
 
@@ -102,9 +124,42 @@ const CreateAssets = ({ darkMode }) => {
     setImage(URL.createObjectURL(e.target.files[0]));
   };
 
+  const createItem = async () => {
+    
+    const {name, description, price} = formInput;
+
+    if(!name || !description || !price || !image){
+      handleTooltipOpen();
+      console.log("Something missed");
+      return;
+    } 
+    
+    const urlImage = await SubmitToIPFS(image);
+
+    const data = JSON.stringify({
+        name, description, savedProperties, image: urlImage
+    })
+    const urlData = await SubmitToIPFS(data);
+
+    try {
+      await createSale(urlData, price);
+      console.log("create sale succesful", urlData);
+      navigate("/explore");
+    }
+    catch(error){
+      console.log(error);
+    }
+  }
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  useEffect(() => {
+    if(signer == null){
+      navigate("/home");
+    }
+  }, [signer]);
 
   return (
     <>
@@ -216,6 +271,7 @@ const CreateAssets = ({ darkMode }) => {
                           }`,
                           width: "90%",
                         }}
+                        onChange={ e => setFormInput({ ...formInput, name: e.target.value})}
                       />
                     </Stack>
                     <Stack direction="column" spacing={2} sx={{ mt: 3 }}>
@@ -249,6 +305,7 @@ const CreateAssets = ({ darkMode }) => {
                           row: 5,
                           resize: "vertical",
                         }}
+                        onChange={ e => setFormInput({ ...formInput, description: e.target.value})}
                       />
                     </Stack>
                     <Stack direction="column" spacing={2} sx={{ mt: 3 }}>
@@ -262,7 +319,7 @@ const CreateAssets = ({ darkMode }) => {
                       >
                         {t("PRICE")} *
                       </label>
-                      <Stack direction="row" spacing={-9.5}>
+                      <Stack direction="row" spacing={"-64px"}>
                         <input
                           className={darkMode ? "inputField" : null}
                           type="number"
@@ -270,6 +327,7 @@ const CreateAssets = ({ darkMode }) => {
                             "CREATE_ASSET_PLACEHOLDER_ENTER_NFT_BASE_PRICE"
                           )}
                           name="nftPrice"
+                          required
                           style={{
                             fontSize: "14px",
                             border: "1px solid #c4c4c4",
@@ -281,13 +339,14 @@ const CreateAssets = ({ darkMode }) => {
                             }`,
                             width: "90%",
                           }}
+                          onChange={ e => setFormInput({ ...formInput, price: e.target.value})}
                         />
                         <Button
                           disableElevation
                           color="secondary"
                           variant="contained"
                         >
-                          {t("MINTO")}
+                          {t("CURRENCY")}
                         </Button>
                       </Stack>
                     </Stack>
@@ -403,6 +462,7 @@ const CreateAssets = ({ darkMode }) => {
                           >
                             <label htmlFor="icon-button-file-front">
                               <Input
+                                required
                                 accept="image/*"
                                 id="icon-button-file-front"
                                 type="file"
@@ -603,17 +663,31 @@ const CreateAssets = ({ darkMode }) => {
                   </Box>
                 </Grid>
               </Grid>
-              <GradientButtonPrimary
-                type="submit"
-                sx={{ display: "flex", alignItems: "center", gap: 2, mt: 5 }}
-              >
-                <Typography component="span" color="#ffffff">
-                  <MdAddToPhotos />
-                </Typography>
-                <Typography variant="body2" component="span">
-                  {t("CREATE_ASSET")}
-                </Typography>
-              </GradientButtonPrimary>
+              <ClickAwayListener onClickAway={handleTooltipClose}>
+                <Tooltip
+                  PopperProps={{
+                    disablePortal: true,
+                  }}
+                  onClose={handleTooltipClose}
+                  open={openTooltip}
+                  disableFocusListener
+                  disableHoverListener
+                  disableTouchListener
+                  title={t("CREATE_ASSET_TOOLTIP")}
+                >
+                  <GradientButtonPrimary
+                    sx={{ display: "flex", alignItems: "center", gap: 2, mt: 5 }}
+                    onClick={createItem}
+                  >
+                    <Typography component="span" color="#ffffff">
+                      <MdAddToPhotos />
+                    </Typography>
+                    <Typography variant="body2" component="span">
+                      {t("CREATE_ASSET")}
+                    </Typography>
+                  </GradientButtonPrimary>
+                </Tooltip>
+              </ClickAwayListener>
             </Box>
           </Box>
         </Box>
@@ -710,6 +784,7 @@ const CreateAssets = ({ darkMode }) => {
                   >
                     <label htmlFor="icon-button-file-front">
                       <Input
+                        required
                         accept="image/*"
                         id="icon-button-file-front"
                         type="file"
@@ -782,6 +857,7 @@ const CreateAssets = ({ darkMode }) => {
                     color: `${darkMode ? "#ffffff" : "#121212"}`,
                     backgroundColor: `${darkMode ? "#040404" : "#ffffff"}`,
                   }}
+                  onChange={ e => setFormInput({ ...formInput, name: e.target.value})}
                 />
               </Stack>
               <Stack direction="column" spacing={2} sx={{ mt: 3 }}>
@@ -811,6 +887,7 @@ const CreateAssets = ({ darkMode }) => {
                     row: 5,
                     resize: "vertical",
                   }}
+                  onChange={ e => setFormInput({ ...formInput, description: e.target.value})}
                 />
               </Stack>
               <Stack direction="column" spacing={2} sx={{ mt: 3 }}>
@@ -823,7 +900,7 @@ const CreateAssets = ({ darkMode }) => {
                 >
                   {t("PRICE")} *
                 </label>
-                <Stack direction="row" spacing={-9.5}>
+                <Stack direction="row" spacing={"-64px"}>
                   <input
                     className={darkMode ? "inputFieldMobile" : null}
                     type="number"
@@ -831,6 +908,7 @@ const CreateAssets = ({ darkMode }) => {
                       "CREATE_ASSET_PLACEHOLDER_ENTER_NFT_BASE_PRICE"
                     )}
                     name="nftPrice"
+                    required
                     style={{
                       fontSize: "14px",
                       border: "1px solid #c4c4c4",
@@ -840,13 +918,14 @@ const CreateAssets = ({ darkMode }) => {
                       backgroundColor: `${darkMode ? "#040404" : "#ffffff"}`,
                       width: "90%",
                     }}
+                    onChange={ e => setFormInput({ ...formInput, price: e.target.value})}
                   />
                   <Button
                     disableElevation
                     color="secondary"
                     variant="contained"
                   >
-                    {t("MINTO")}
+                    {t("CURRENCY")}
                   </Button>
                 </Stack>
               </Stack>
@@ -993,7 +1072,7 @@ const CreateAssets = ({ darkMode }) => {
                   </IconButton>
                 </Stack>
                 <Box>
-                  {propertiesDataState.map((pds, index) => (
+                  {savedProperties.map((pds, index) => (
                     <Stack
                       key={index}
                       direction="row"
@@ -1059,17 +1138,31 @@ const CreateAssets = ({ darkMode }) => {
                   ))}
                 </Box>
               </Box>
-              <GradientButtonPrimary
-                type="submit"
-                sx={{ display: "flex", alignItems: "center", gap: 2, mt: 5 }}
-              >
-                <Typography component="span" color="secondary">
-                  <MdAddToPhotos />
-                </Typography>
-                <Typography variant="body2" component="span">
-                  {t("CREATE_ASSET")}
-                </Typography>
-              </GradientButtonPrimary>
+                <ClickAwayListener onClickAway={handleTooltipClose}>
+                  <Tooltip
+                    PopperProps={{
+                      disablePortal: true,
+                    }}
+                    onClose={handleTooltipClose}
+                    open={openTooltip}
+                    disableFocusListener
+                    disableHoverListener
+                    disableTouchListener
+                    title="You need to fulfill all the fields"
+                  >
+                    <GradientButtonPrimary
+                      sx={{ display: "flex", alignItems: "center", gap: 2, mt: 5 }}
+                      onClick={createItem}
+                      >
+                      <Typography component="span" color="secondary">
+                        <MdAddToPhotos />
+                      </Typography>
+                      <Typography variant="body2" component="span">
+                        {t("CREATE_ASSET")}
+                      </Typography>
+                    </GradientButtonPrimary>
+                  </Tooltip>
+                </ClickAwayListener>          
             </Box>
           </Box>
         </Box>

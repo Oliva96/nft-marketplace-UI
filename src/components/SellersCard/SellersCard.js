@@ -5,10 +5,6 @@ import { Box } from "@mui/system";
 // Icon
 import { AiFillCrown } from "react-icons/ai";
 import { MdAddToPhotos } from "react-icons/md";
-// import PlusIcon from "../../assets/Icons/darkUIIcons/plusIcon.svg";
-// import OwnIcon from "../../assets/Icons/darkUIIcons/ownIcon.svg";
-// import PlusIconLight from "../../assets/Icons/lightUIIcons/plusIcon.svg";
-// import OwnIconLight from "../../assets/Icons/lightUIIcons/ownIcon.svg";
 import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 

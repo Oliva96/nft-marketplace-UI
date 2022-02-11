@@ -41,48 +41,36 @@ import SideFooterLogoDark from "../../assets/sideFooterLogoDark.svg";
 const profileSideMenu = [
   {
     id: 1,
-    name: "SETTINGS_USER_PROFILE",
-    icon: <IoPersonSharp />,
-    path: "/profile/user-profile",
-  },
-  {
-    id: 2,
-    name: "SETTINGS_KYC",
-    icon: <AiFillIdcard />,
-    path: "/profile/kyc",
-  },
-  {
-    id: 3,
     name: "SETTINGS_LANGUAGE",
     icon: <IoLanguage />,
     path: "/profile/language",
   },
   {
-    id: 4,
+    id: 2,
     name: "SETTINGS_THEME",
     icon: <IoIosSwitch />,
     path: "/profile/theme",
   },
   {
-    id: 5,
+    id: 3,
     name: "FOOTER_LINK_FAQS",
     icon: <BsQuestionOctagonFill />,
     path: "/frequently-asked-questions",
   },
   {
-    id: 6,
+    id: 4,
     name: "FOOTER_LINK_PRIVACY_POLICY",
     icon: <MdLock />,
     path: "/privacy-policy",
   },
   {
-    id: 7,
+    id: 5,
     name: "FOOTER_LINK_TERMS_CONDITION",
     icon: <CgLoadbarDoc />,
     path: "/terms-and-condition",
   },
   {
-    id: 8,
+    id: 6,
     name: "FOOTER_LINK_CONTACT_US",
     icon: <GiBugleCall />,
     lightIcon: <GiBugleCall />,

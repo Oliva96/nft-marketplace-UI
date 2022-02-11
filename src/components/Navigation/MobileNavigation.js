@@ -8,6 +8,7 @@ import { MdAddToPhotos, MdGavel } from "react-icons/md";
 import { useLocation, useNavigate } from "react-router-dom";
 
 // Metamask Icon
+// import MetaMaskIcon from "../../assets/Icons/darkUIIcons/metamask-1.svg";
 import MetaMaskIcon from "../../assets/Icons/darkUIIcons/metaMaskIcon.svg";
 import MetaMaskIconLight from "../../assets/Icons/lightUIIcons/metaMaskIcon.svg";
 
@@ -17,9 +18,18 @@ const MobileNavigation = ({
   openMenu,
   handleClickTrigger,
   handleOpenModal,
+  signer
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const handleCreateAsset = () => {
+    if(signer == null) {
+      handleOpenModal();
+      return;
+    }
+    navigate("/create-asset");
+  }
 
   return (
     <div>
@@ -156,7 +166,7 @@ const MobileNavigation = ({
                   alignItems: "center",
                   gap: 1,
                 }}
-                onClick={() => navigate("/create-asset")}
+                onClick={handleCreateAsset}
                 variant="text"
                 color="secondary"
               >

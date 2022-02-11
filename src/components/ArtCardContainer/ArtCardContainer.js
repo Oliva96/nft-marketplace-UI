@@ -2,9 +2,6 @@ import { Box, useMediaQuery } from "@mui/material";
 import React from "react";
 import useQuery from "../../hooks/useQuery";
 import AllArtCards from "./AllArtCards";
-import ArtArtCards from "./ArtArtCards";
-import MemesArtCards from "./MemesArtCards";
-import MusicArtCards from "./MusicArtCards";
 
 import Backdrop from "../../assets/exploreBackDropCircle.svg";
 import BackdropMobile from "../../assets/backdropMobile.svg";
@@ -12,8 +9,6 @@ import BackdropMobile from "../../assets/backdropMobile.svg";
 import BackgroundWrinkles1 from "../../assets/BackgroundWrinkles1.svg";
 import BackgroundWrinklesLight from "../../assets/backgroundWrinklesLight.svg";
 import { useTheme } from "@emotion/react";
-import PosterArtCards from "./PosterArtCards";
-import SignatureArtCards from "./SignatureArtCards";
 
 const ArtCardContainer = ({ darkMode }) => {
   const theme = useTheme();
@@ -49,11 +44,6 @@ const ArtCardContainer = ({ darkMode }) => {
         }}
       >
         <AllArtCards darkMode={darkMode} queryName={query.get("type")} />
-        <ArtArtCards darkMode={darkMode} queryName={query.get("type")} />
-        <MusicArtCards darkMode={darkMode} queryName={query.get("type")} />
-        <PosterArtCards darkMode={darkMode} queryName={query.get("type")} />
-        <SignatureArtCards darkMode={darkMode} queryName={query.get("type")} />
-        <MemesArtCards darkMode={darkMode} queryName={query.get("type")} />
       </Box>
     </div>
   );

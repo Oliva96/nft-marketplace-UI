@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 // Material UI components
 import {
   Box,
@@ -33,11 +33,16 @@ import { BsChevronDown } from "react-icons/bs";
 import { IoPersonSharp } from "react-icons/io5";
 import { TiCancel } from "react-icons/ti";
 
-import MetaMaskIcon from "../../assets/Icons/darkUIIcons/metaMaskIcon.svg";
+import MetaMaskIcon from "../../assets/Icons/darkUIIcons/metamask-1.svg";
 import MobileNavigation from "./MobileNavigation";
+import { Connect } from "../../Services/Navigation.service";
+import SignerContext from "../../signerContext";
 
 const Navigation = ({ darkMode }) => {
-  const [walletAddress, setWalletAddress] = useState("");
+
+  const { signer, setSigner} = useContext(SignerContext);
+  const [walletAddress, setWalletAddress] = useState(null);
+
   const [openModal, setOpenModal] = React.useState(false);
 
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -64,19 +69,25 @@ const Navigation = ({ darkMode }) => {
 
   const handleConnectWallet = async () => {
     handleCloseModal();
-    if (typeof window.ethereum !== "undefined") {
-      const accounts = await window.ethereum.request({
-        method: "eth_requestAccounts",
-      });
-      setWalletAddress(accounts[0]);
-    }
+    const current_signer = await Connect();
+    setSigner(current_signer);
+    const address = await current_signer.getAddress();
+    setWalletAddress(address);
   };
 
   const handleDisconnectWallet = () => {
-    if (walletAddress) {
-      window.location.reload();
-    }
+    setSigner(null);
+    setWalletAddress(null);
+    handleCloseMenu();
   };
+
+  const handleCreateAsset = () => {
+    if(signer == null) {
+      handleOpenModal();
+      return;
+    }
+    navigate("/create-asset");
+  }
 
   return (
     <div
@@ -202,7 +213,7 @@ const Navigation = ({ darkMode }) => {
           </Box>
           <Box style={{ display: "flex", gap: "1rem", marginRight: "2.8rem" }}>
             <GradientButtonPrimary
-              onClick={() => navigate("/create-asset")}
+              onClick={handleCreateAsset}
               sx={{
                 display: "flex",
                 justifyContent: "center",
@@ -229,10 +240,11 @@ const Navigation = ({ darkMode }) => {
                   justifyContent: "center",
                   alignItems: "center",
                   gap: 2,
+                  padding: "3px 5px",
                 }}
               >
                 <img
-                  style={{ width: "20px", height: "20px" }}
+                  style={{ width: "40px", height: "40px" }}
                   src={MetaMaskIcon}
                   alt="Meta Mask Icon"
                 />
@@ -246,7 +258,7 @@ const Navigation = ({ darkMode }) => {
                     gap: 2,
                   }}
                 >
-                  {walletAddress.slice(0, 10)} <BsChevronDown />
+                  {walletAddress.slice(0, 10)}... <BsChevronDown />
                 </Typography>
               </GradientButtonSecondary>
             ) : (
@@ -276,6 +288,7 @@ const Navigation = ({ darkMode }) => {
           openMenu={openMenu}
           handleClickTrigger={handleClickTrigger}
           handleOpenModal={handleOpenModal}
+          signer={signer}
         />
       )}
       {/* )} */}
@@ -284,8 +297,6 @@ const Navigation = ({ darkMode }) => {
         handleCloseModal={handleCloseModal}
         darkMode={darkMode}
         handleConnectWallet={handleConnectWallet}
-        handleDisconnectWallet={handleDisconnectWallet}
-        walletAddress={walletAddress}
       />
       {!isMobile ? (
         <Menu
@@ -339,6 +350,7 @@ const Navigation = ({ darkMode }) => {
           </MenuItem>
         </Menu>
       ) : (
+
         <Menu
           id="basic-menu"
           anchorEl={anchorEl}
@@ -365,25 +377,12 @@ const Navigation = ({ darkMode }) => {
               marginBottom: "10px",
             }}
           >
-            {darkMode ? (
-              <img
-                style={{ height: "20px", width: "20px" }}
-                src={MetaMaskIcon}
-                alt="Metamask"
-              />
-            ) : (
-              <img
-                style={{ height: "20px", width: "20px" }}
-                src={MetaMaskIcon}
-                alt="Metamask"
-              />
-            )}
             <Typography
               variant="body1"
               color="secondary"
               sx={{ fontSize: "12px" }}
             >
-              {walletAddress.slice(0, 10)}
+              { walletAddress ? `${walletAddress.slice(0, 10)}...` : null}
             </Typography>
           </MenuItem>
           <MenuItem
