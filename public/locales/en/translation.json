@@ -139,5 +139,9 @@
   "KYC_ENTER_SELLER_NAME_HERE": "Seller name here",
   "KYC_ENTER_YOUR_ADDRESS_HERE": "Your address here",
   "ENTER_YOUR_ADHARCARD_NUMBER_HERE": "AdharCard Number Here",
-  "FILTER_MOST_RECENT": "Most Recent"
+  "FILTER_MOST_RECENT": "Most Recent",
+  "YOU_ARE_CONNECTED": "You are now connected",
+  "CONNECTION_FAILED": "Connection Failed",
+  "ASSET_CREATED_SUCCESSFULLY": "Asset created successfully",
+  "ASSET_COULD_NOT_BE_CREATED": "Asset could not be created"
 }

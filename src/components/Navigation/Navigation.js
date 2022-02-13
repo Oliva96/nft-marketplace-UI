@@ -35,8 +35,10 @@ import { TiCancel } from "react-icons/ti";
 
 import MetaMaskIcon from "../../assets/Icons/darkUIIcons/metamask-1.svg";
 import MobileNavigation from "./MobileNavigation";
-import { Connect } from "../../Services/Navigation.service";
+import { Connect, CreateUser } from "../../Services/Navigation.service";
 import SignerContext from "../../signerContext";
+
+import toast, { Toaster} from 'react-hot-toast';
 
 const Navigation = ({ darkMode }) => {
 
@@ -67,14 +69,35 @@ const Navigation = ({ darkMode }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  
   const handleConnectWallet = async () => {
     handleCloseModal();
-    const current_signer = await Connect();
-    setSigner(current_signer);
-    const address = await current_signer.getAddress();
-    setWalletAddress(address);
-  };
+    toast.loading(<b>Connecting</b>, {
+      position: 'bottom-center'
+    });
 
+    try{
+      const current_signer = await Connect();
+      setSigner(current_signer);
+      const address = await current_signer.getAddress();
+      const userDoc = await CreateUser(address);
+      console.log(userDoc);
+      setWalletAddress(address);
+      
+      toast.dismiss();
+      toast.success(t("YOU_ARE_CONNECTED"), {
+        position: 'bottom-center'
+      });
+    } 
+    catch(error) {
+      console.log(error);
+      toast.dismiss();
+      toast.error(t("CONNECTION_FAILED"), {
+        position: 'bottom-center'
+      });
+    }
+  };
+  
   const handleDisconnectWallet = () => {
     setSigner(null);
     setWalletAddress(null);
@@ -97,6 +120,16 @@ const Navigation = ({ darkMode }) => {
         // marginBottom: "-10rem",
       }}
     >
+      <Toaster 
+        toastOptions={{
+          style: {
+            backgroundColor: `${darkMode ? "#fff2f8" : "#171C26"}`,
+            border: `2px solid ${darkMode ? "#713200" : "aqua"}#`,
+            padding: '16px',
+            color: `${darkMode ? "#713200" : "aqua"}`,
+          },
+        }}
+      />
       {!isMobile ? (
         <Container
           sx={{

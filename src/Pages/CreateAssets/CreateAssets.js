@@ -31,6 +31,7 @@ import { LocalizationProvider, MobileDatePicker } from "@mui/lab";
 import { createSale, SubmitToIPFS } from "../../Services/CreateAssets.service";
 import SignerContext from "../../signerContext";
 import { useNavigate } from "react-router-dom";
+import toast, { Toaster} from 'react-hot-toast';
 
 const Input = styled("input")({
   display: "none",
@@ -134,20 +135,31 @@ const CreateAssets = ({ darkMode }) => {
       return;
     } 
     
-    const urlImage = await SubmitToIPFS(image);
-
-    const data = JSON.stringify({
-        name, description, savedProperties, image: urlImage
-    })
-    const urlData = await SubmitToIPFS(data);
-
     try {
+      toast.loading(<b>Creating Asset</b>, {
+        position: 'bottom-center'
+      });
+      const urlImage = await SubmitToIPFS(image);
+      const data = JSON.stringify({
+          name, description, savedProperties, image: urlImage
+      })
+      const urlData = await SubmitToIPFS(data);
+
       await createSale(urlData, price);
       console.log("create sale succesful", urlData);
+
+      toast.dismiss();
+      toast.success(t("ASSET_CREATED_SUCCESSFULLY"), {
+        position: 'bottom-center'
+      });
       navigate("/explore");
     }
     catch(error){
       console.log(error);
+      toast.dismiss();
+      toast.error(t("ASSET_COULD_NOT_BE_CREATED"), {
+        position: 'bottom-center'
+      });
     }
   }
 
@@ -163,6 +175,16 @@ const CreateAssets = ({ darkMode }) => {
 
   return (
     <>
+      <Toaster 
+        toastOptions={{
+          style: {
+            backgroundColor: `${darkMode ? "#fff2f8" : "#171C26"}`,
+            border: `2px solid ${darkMode ? "#713200" : "aqua"}#`,
+            padding: '16px',
+            color: `${darkMode ? "#713200" : "aqua"}`,
+          },
+        }}
+      />
       <Box>
         <AssetProperModal
           handlePropertiesChange={handlePropertiesChange}

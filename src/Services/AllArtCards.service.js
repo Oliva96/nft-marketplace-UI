@@ -1,7 +1,5 @@
-
 import { ethers } from 'ethers';
 import axios from 'axios';
-import Web3Modal from 'web3modal';
 
 import { nftAddress, nftMarketAddress} from '../config';
 import NFT from '../contracts/NFT.sol/NFT.json';
@@ -37,11 +35,7 @@ export const loadNFTs = async () => {
     return items;
 };
 
-export const buyNft = async (NftTokenId) => {
-    const web3Modal = new Web3Modal();
-    const connection = await web3Modal.connect();
-    const provider = new ethers.providers.Web3Provider(connection);
-    const signer = provider.getSigner();
+export const buyNft = async (NftTokenId, signer) => {
 
     const contract = new ethers.Contract(nftMarketAddress, Market.abi, signer);
     const nft = await contract.getItemById(NftTokenId);
